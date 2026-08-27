@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
 		let react_dom = require("react-dom");
 		let react_jsx_runtime = require("react/jsx-runtime");
 		//#region \0dsh-css:/run/media/user1/78E6859DE6855BEE/code/js/dsh-chat-jump/src/client/ChatHistoryQuickJump.module.css.mjs
-		const css = "._8fFqXG_navContainer{z-index:25;user-select:none;pointer-events:auto;font-family:inherit;position:fixed;top:50%;transform:translateY(-50%)}._8fFqXG_collapsedWidget{background:var(--dsw-alias-bg-module-platform,#1c1c22d9);-webkit-backdrop-filter:blur(16px);border:1px solid var(--dsw-alias-border-l2,#ffffff14);cursor:pointer;border-radius:12px;flex-direction:column;justify-content:center;align-items:center;gap:3.5px;min-width:28px;padding:8px 6px;transition:all .22s cubic-bezier(.16,1,.3,1);display:flex;box-shadow:0 2px 8px #00000014,0 1px 2px #0000000a}._8fFqXG_collapsedWidget:hover{border-color:var(--dsw-alias-brand-primary,#4d6bfe);transform:scale(1.04);box-shadow:0 4px 14px #0000001f,0 0 6px #4d6bfe26}._8fFqXG_miniLine{background:var(--dsw-alias-label-tertiary,#ffffff40);pointer-events:none;border-radius:2px;height:2.5px;transition:all .2s cubic-bezier(.16,1,.3,1)}._8fFqXG_miniLine._8fFqXG_activeLine{background:var(--dsw-alias-brand-primary,#4d6bfe);height:3.5px;box-shadow:0 0 5px #4d6bfe73;width:20px!important}._8fFqXG_moreDots{justify-content:center;align-items:center;gap:2px;margin-top:2px;display:flex}._8fFqXG_moreDot{background:var(--dsw-alias-label-tertiary,#ffffff4d);border-radius:50%;width:2.5px;height:2.5px}._8fFqXG_expandedCard{background:var(--dsw-alias-bg-module-platform,#18181ef0);-webkit-backdrop-filter:blur(20px);border:1px solid var(--dsw-alias-border-l2,#ffffff1a);border-radius:14px;flex-direction:column;width:300px;max-height:480px;animation:.22s cubic-bezier(.16,1,.3,1) _8fFqXG_expandIn;display:flex;position:absolute;top:50%;right:0;overflow:hidden;transform:translateY(-50%);box-shadow:0 6px 20px #0000001f,0 2px 6px #0000000f}@keyframes _8fFqXG_expandIn{0%{opacity:0;transform:translateY(-50%)scale(.94)translate(10px)}to{opacity:1;transform:translateY(-50%)scale(1)translate(0)}}._8fFqXG_cardHeader{border-bottom:1px solid var(--dsw-alias-border-l2,#ffffff1a);background:#ffffff05;justify-content:space-between;align-items:center;padding:11px 14px;display:flex}._8fFqXG_headerLeft{align-items:center;gap:7px;display:flex}._8fFqXG_headerIcon{color:var(--dsw-alias-brand-primary,#4d6bfe);align-items:center;display:flex}._8fFqXG_headerTitle{color:var(--dsw-alias-label-primary,#fff);font-size:13px;font-weight:600;line-height:18px}._8fFqXG_countBadge{color:var(--dsw-alias-label-secondary,#ffffffb3);background:var(--dsw-alias-bg-layer-1,#ffffff14);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:500}._8fFqXG_headerActions{align-items:center;gap:4px;display:flex}._8fFqXG_navButton{border:1px solid var(--dsw-alias-border-l2,#ffffff1a);background:var(--dsw-alias-bg-layer-1,#ffffff0d);width:24px;height:24px;color:var(--dsw-alias-label-secondary,#ffffffb3);cursor:pointer;border-radius:6px;justify-content:center;align-items:center;padding:0;transition:all .15s;display:inline-flex}._8fFqXG_navButton:hover{background:var(--dsw-alias-bg-module-hover,#ffffff1f);color:var(--dsw-alias-label-primary,#fff);border-color:var(--dsw-alias-border-l3,#fff3)}._8fFqXG_questionList{flex-direction:column;gap:4px;max-height:400px;padding:6px;display:flex;overflow:hidden auto}._8fFqXG_questionList::-webkit-scrollbar{width:5px}._8fFqXG_questionList::-webkit-scrollbar-track{background:0 0}._8fFqXG_questionList::-webkit-scrollbar-thumb{background:var(--dsw-alias-border-l2,#ffffff26);border-radius:4px}._8fFqXG_questionList::-webkit-scrollbar-thumb:hover{background:var(--dsw-alias-border-l3,#ffffff4d)}._8fFqXG_questionItem{text-align:left;cursor:pointer;box-sizing:border-box;background:0 0;border:1px solid #0000;border-radius:9px;align-items:flex-start;gap:8px;width:100%;padding:8px 10px;transition:all .15s cubic-bezier(.16,1,.3,1);display:flex}._8fFqXG_questionItem:hover{background:var(--dsw-alias-bg-module-hover,#ffffff12);border-color:var(--dsw-alias-border-l2,#ffffff1f);transform:translate(-2px)}._8fFqXG_questionItem._8fFqXG_activeItem{background:#4d6bfe1f;border-color:#4d6bfe59}._8fFqXG_indexBadge{background:var(--dsw-alias-bg-layer-1,#ffffff14);color:var(--dsw-alias-label-secondary,#ffffffb3);border-radius:6px;flex:none;padding:2px 6px;font-size:11px;font-weight:600;line-height:16px;transition:all .15s}._8fFqXG_activeItem ._8fFqXG_indexBadge{background:var(--dsw-alias-brand-primary,#4d6bfe);color:#fff;box-shadow:0 0 8px #4d6bfe80}._8fFqXG_itemContent{flex-direction:column;flex:1;gap:2px;min-width:0;display:flex}._8fFqXG_itemText{color:var(--dsw-alias-label-secondary,#ffffffbf);-webkit-line-clamp:2;text-overflow:ellipsis;word-break:break-word;-webkit-box-orient:vertical;font-size:12px;line-height:18px;transition:color .15s;display:-webkit-box;overflow:hidden}._8fFqXG_questionItem:hover ._8fFqXG_itemText{color:var(--dsw-alias-label-primary,#fff)}._8fFqXG_activeItem ._8fFqXG_itemText{color:var(--dsw-alias-label-primary,#fff);font-weight:500}._8fFqXG_itemTime{color:var(--dsw-alias-label-tertiary,#fff6);font-size:10px;line-height:14px}._8fFqXG_highlightTarget{animation:1.8s cubic-bezier(.16,1,.3,1) forwards _8fFqXG_jumpTargetPulse!important}@keyframes _8fFqXG_jumpTargetPulse{0%{outline:2.5px solid var(--dsw-alias-brand-primary,#4d6bfe);border-radius:12px;box-shadow:0 0 24px #4d6bfeb3}60%{outline:2px solid var(--dsw-alias-brand-primary,#4d6bfe);border-radius:12px;box-shadow:0 0 14px #4d6bfe59}to{box-shadow:none;outline:2px solid #0000}}@media (width<=768px){._8fFqXG_expandedCard{width:min(280px,100vw - 28px)}}";
+		const css = "._8fFqXG_navContainer{z-index:25;user-select:none;pointer-events:auto;font-family:inherit;position:fixed;top:50%;transform:translateY(-50%)}._8fFqXG_collapsedWidget{background:var(--dsw-alias-bg-module-platform,#1c1c22d9);-webkit-backdrop-filter:blur(16px);border:1px solid var(--dsw-alias-border-l2,#ffffff14);cursor:pointer;appearance:none;min-width:28px;color:inherit;font:inherit;border-radius:12px;flex-direction:column;justify-content:center;align-items:center;gap:3.5px;padding:8px 6px;transition:all .22s cubic-bezier(.16,1,.3,1);display:flex;box-shadow:0 2px 8px #00000014,0 1px 2px #0000000a}._8fFqXG_collapsedWidget:hover{border-color:var(--dsw-alias-brand-primary,#4d6bfe);transform:scale(1.04);box-shadow:0 4px 14px #0000001f,0 0 6px #4d6bfe26}._8fFqXG_miniLine{background:var(--dsw-alias-label-tertiary,#ffffff40);pointer-events:none;border-radius:2px;height:2.5px;transition:all .2s cubic-bezier(.16,1,.3,1)}._8fFqXG_miniLine._8fFqXG_activeLine{background:var(--dsw-alias-brand-primary,#4d6bfe);height:3.5px;box-shadow:0 0 5px #4d6bfe73;width:20px!important}._8fFqXG_moreDots{justify-content:center;align-items:center;gap:2px;margin-top:2px;display:flex}._8fFqXG_moreDot{background:var(--dsw-alias-label-tertiary,#ffffff4d);border-radius:50%;width:2.5px;height:2.5px}._8fFqXG_expandedCard{background:var(--dsw-alias-bg-module-platform,#18181ef0);-webkit-backdrop-filter:blur(20px);border:1px solid var(--dsw-alias-border-l2,#ffffff1a);border-radius:14px;flex-direction:column;width:300px;max-height:480px;animation:.22s cubic-bezier(.16,1,.3,1) _8fFqXG_expandIn;display:flex;position:absolute;top:50%;right:0;overflow:hidden;transform:translateY(-50%);box-shadow:0 6px 20px #0000001f,0 2px 6px #0000000f}@keyframes _8fFqXG_expandIn{0%{opacity:0;transform:translateY(-50%)scale(.94)translate(10px)}to{opacity:1;transform:translateY(-50%)scale(1)translate(0)}}._8fFqXG_cardHeader{border-bottom:1px solid var(--dsw-alias-border-l2,#ffffff1a);background:#ffffff05;justify-content:space-between;align-items:center;padding:11px 14px;display:flex}._8fFqXG_headerLeft{align-items:center;gap:7px;display:flex}._8fFqXG_headerIcon{color:var(--dsw-alias-brand-primary,#4d6bfe);align-items:center;display:flex}._8fFqXG_headerTitle{color:var(--dsw-alias-label-primary,#fff);font-size:13px;font-weight:600;line-height:18px}._8fFqXG_countBadge{color:var(--dsw-alias-label-secondary,#ffffffb3);background:var(--dsw-alias-bg-layer-1,#ffffff14);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:500}._8fFqXG_headerActions{align-items:center;gap:4px;display:flex}._8fFqXG_navButton{border:1px solid var(--dsw-alias-border-l2,#ffffff1a);background:var(--dsw-alias-bg-layer-1,#ffffff0d);width:24px;height:24px;color:var(--dsw-alias-label-secondary,#ffffffb3);cursor:pointer;border-radius:6px;justify-content:center;align-items:center;padding:0;transition:all .15s;display:inline-flex}._8fFqXG_navButton:hover{background:var(--dsw-alias-bg-module-hover,#ffffff1f);color:var(--dsw-alias-label-primary,#fff);border-color:var(--dsw-alias-border-l3,#fff3)}._8fFqXG_questionList{flex-direction:column;gap:4px;max-height:400px;padding:6px;display:flex;overflow:hidden auto}._8fFqXG_questionList::-webkit-scrollbar{width:5px}._8fFqXG_questionList::-webkit-scrollbar-track{background:0 0}._8fFqXG_questionList::-webkit-scrollbar-thumb{background:var(--dsw-alias-border-l2,#ffffff26);border-radius:4px}._8fFqXG_questionList::-webkit-scrollbar-thumb:hover{background:var(--dsw-alias-border-l3,#ffffff4d)}._8fFqXG_questionItem{text-align:left;cursor:pointer;box-sizing:border-box;background:0 0;border:1px solid #0000;border-radius:9px;align-items:flex-start;gap:8px;width:100%;padding:8px 10px;transition:all .15s cubic-bezier(.16,1,.3,1);display:flex}._8fFqXG_questionItem:hover{background:var(--dsw-alias-bg-module-hover,#ffffff12);border-color:var(--dsw-alias-border-l2,#ffffff1f);transform:translate(-2px)}._8fFqXG_questionItem._8fFqXG_activeItem{background:#4d6bfe1f;border-color:#4d6bfe59}._8fFqXG_indexBadge{background:var(--dsw-alias-bg-layer-1,#ffffff14);color:var(--dsw-alias-label-secondary,#ffffffb3);border-radius:6px;flex:none;padding:2px 6px;font-size:11px;font-weight:600;line-height:16px;transition:all .15s}._8fFqXG_activeItem ._8fFqXG_indexBadge{background:var(--dsw-alias-brand-primary,#4d6bfe);color:#fff;box-shadow:0 0 8px #4d6bfe80}._8fFqXG_itemContent{flex-direction:column;flex:1;gap:2px;min-width:0;display:flex}._8fFqXG_itemText{color:var(--dsw-alias-label-secondary,#ffffffbf);-webkit-line-clamp:2;text-overflow:ellipsis;word-break:break-word;-webkit-box-orient:vertical;font-size:12px;line-height:18px;transition:color .15s;display:-webkit-box;overflow:hidden}._8fFqXG_questionItem:hover ._8fFqXG_itemText{color:var(--dsw-alias-label-primary,#fff)}._8fFqXG_activeItem ._8fFqXG_itemText{color:var(--dsw-alias-label-primary,#fff);font-weight:500}._8fFqXG_itemTime{color:var(--dsw-alias-label-tertiary,#fff6);font-size:10px;line-height:14px}._8fFqXG_highlightTarget{animation:1.8s cubic-bezier(.16,1,.3,1) forwards _8fFqXG_jumpTargetPulse!important}@keyframes _8fFqXG_jumpTargetPulse{0%{outline:2.5px solid var(--dsw-alias-brand-primary,#4d6bfe);border-radius:12px;box-shadow:0 0 24px #4d6bfeb3}60%{outline:2px solid var(--dsw-alias-brand-primary,#4d6bfe);border-radius:12px;box-shadow:0 0 14px #4d6bfe59}to{box-shadow:none;outline:2px solid #0000}}._8fFqXG_mobileCloseButton{display:none}@media (width<=768px),(hover:none) and (pointer:coarse){._8fFqXG_navContainer{top:auto;bottom:max(72px, calc(env(safe-area-inset-bottom) + 12px));transform:none}._8fFqXG_collapsedWidget{touch-action:manipulation;border-radius:14px;gap:3px;min-width:44px;min-height:44px;padding:10px 9px}._8fFqXG_expandedCard{border-radius:16px;width:min(360px,100vw - 36px);max-height:min(560px,100dvh - 96px);animation-name:_8fFqXG_expandInMobile;top:auto;bottom:calc(100% + 10px);right:0}._8fFqXG_cardHeader{padding:12px 12px 12px 14px}._8fFqXG_headerTitle{font-size:14px;line-height:20px}._8fFqXG_headerActions{gap:6px}._8fFqXG_navButton,._8fFqXG_mobileCloseButton{touch-action:manipulation;border-radius:9px;width:36px;height:36px}._8fFqXG_mobileCloseButton{display:inline-flex}._8fFqXG_questionList{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;max-height:min(480px,100dvh - 168px);padding:8px}._8fFqXG_questionItem{touch-action:manipulation;gap:10px;min-height:44px;padding:10px 12px}._8fFqXG_itemText{font-size:13px;line-height:20px}._8fFqXG_itemTime{font-size:11px;line-height:16px}._8fFqXG_questionItem:hover{transform:none}}@keyframes _8fFqXG_expandInMobile{0%{opacity:0;transform:translateY(8px)scale(.96)}to{opacity:1;transform:translateY(0)scale(1)}}@media (prefers-reduced-motion:reduce){._8fFqXG_collapsedWidget,._8fFqXG_expandedCard,._8fFqXG_questionItem,._8fFqXG_miniLine{transition-duration:.01ms!important;animation-duration:.01ms!important}}";
 		const tagId = "dsh-chat-jump/ChatHistoryQuickJump.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -18,30 +18,32 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var ChatHistoryQuickJump_module_css_default = {
-			"moreDots": "_8fFqXG_moreDots",
-			"collapsedWidget": "_8fFqXG_collapsedWidget",
-			"navButton": "_8fFqXG_navButton",
-			"questionList": "_8fFqXG_questionList",
-			"activeItem": "_8fFqXG_activeItem",
-			"expandIn": "_8fFqXG_expandIn",
-			"questionItem": "_8fFqXG_questionItem",
 			"navContainer": "_8fFqXG_navContainer",
-			"itemText": "_8fFqXG_itemText",
-			"headerActions": "_8fFqXG_headerActions",
-			"moreDot": "_8fFqXG_moreDot",
-			"headerLeft": "_8fFqXG_headerLeft",
-			"expandedCard": "_8fFqXG_expandedCard",
-			"indexBadge": "_8fFqXG_indexBadge",
-			"highlightTarget": "_8fFqXG_highlightTarget",
-			"countBadge": "_8fFqXG_countBadge",
-			"itemContent": "_8fFqXG_itemContent",
-			"headerIcon": "_8fFqXG_headerIcon",
-			"itemTime": "_8fFqXG_itemTime",
-			"jumpTargetPulse": "_8fFqXG_jumpTargetPulse",
 			"cardHeader": "_8fFqXG_cardHeader",
-			"miniLine": "_8fFqXG_miniLine",
+			"collapsedWidget": "_8fFqXG_collapsedWidget",
+			"questionList": "_8fFqXG_questionList",
+			"moreDots": "_8fFqXG_moreDots",
+			"headerTitle": "_8fFqXG_headerTitle",
+			"questionItem": "_8fFqXG_questionItem",
+			"navButton": "_8fFqXG_navButton",
+			"itemContent": "_8fFqXG_itemContent",
+			"itemText": "_8fFqXG_itemText",
+			"jumpTargetPulse": "_8fFqXG_jumpTargetPulse",
+			"expandedCard": "_8fFqXG_expandedCard",
 			"activeLine": "_8fFqXG_activeLine",
-			"headerTitle": "_8fFqXG_headerTitle"
+			"highlightTarget": "_8fFqXG_highlightTarget",
+			"itemTime": "_8fFqXG_itemTime",
+			"mobileCloseButton": "_8fFqXG_mobileCloseButton",
+			"expandInMobile": "_8fFqXG_expandInMobile",
+			"headerLeft": "_8fFqXG_headerLeft",
+			"moreDot": "_8fFqXG_moreDot",
+			"activeItem": "_8fFqXG_activeItem",
+			"headerIcon": "_8fFqXG_headerIcon",
+			"miniLine": "_8fFqXG_miniLine",
+			"indexBadge": "_8fFqXG_indexBadge",
+			"countBadge": "_8fFqXG_countBadge",
+			"expandIn": "_8fFqXG_expandIn",
+			"headerActions": "_8fFqXG_headerActions"
 		};
 		//#endregion
 		//#region src/client/ChatHistoryQuickJump.tsx
@@ -92,6 +94,22 @@ window.__ModuleLoader__.load({
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
 					d: "M8 12.5L12.5 8L11.45 6.95L8.75 9.65V3.5H7.25V9.65L4.55 6.95L3.5 8L8 12.5Z",
 					fill: "currentColor"
+				})
+			});
+		}
+		/** Close icon used by the touch-friendly mobile panel. */
+		function CloseIcon() {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+				width: "14",
+				height: "14",
+				viewBox: "0 0 16 16",
+				fill: "none",
+				xmlns: "http://www.w3.org/2000/svg",
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
+					d: "M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5",
+					stroke: "currentColor",
+					strokeWidth: "1.5",
+					strokeLinecap: "round"
 				})
 			});
 		}
@@ -213,9 +231,23 @@ window.__ModuleLoader__.load({
 			const [posRight, setPosRight] = (0, react.useState)(20);
 			const [chatInView, setChatInView] = (0, react.useState)(false);
 			const [domVersion, setDomVersion] = (0, react.useState)(0);
+			const [isMobile, setIsMobile] = (0, react.useState)(false);
 			const listContainerRef = (0, react.useRef)(null);
 			const hoverTimerRef = (0, react.useRef)(null);
 			const highlightTimerRef = (0, react.useRef)(null);
+			(0, react.useEffect)(() => {
+				const mediaQuery = window.matchMedia("(max-width: 768px), (hover: none) and (pointer: coarse)");
+				const updateMobileState = () => {
+					setIsMobile(mediaQuery.matches);
+				};
+				updateMobileState();
+				if (typeof mediaQuery.addEventListener === "function") mediaQuery.addEventListener("change", updateMobileState);
+				else mediaQuery.addListener(updateMobileState);
+				return () => {
+					if (typeof mediaQuery.removeEventListener === "function") mediaQuery.removeEventListener("change", updateMobileState);
+					else mediaQuery.removeListener(updateMobileState);
+				};
+			}, []);
 			(0, react.useEffect)(() => {
 				return () => {
 					if (hoverTimerRef.current !== null) clearTimeout(hoverTimerRef.current);
@@ -400,18 +432,20 @@ window.__ModuleLoader__.load({
 				};
 			}, [questions]);
 			const handleMouseEnter = (0, react.useCallback)(() => {
+				if (isMobile) return;
 				if (hoverTimerRef.current !== null) {
 					clearTimeout(hoverTimerRef.current);
 					hoverTimerRef.current = null;
 				}
 				setIsExpanded(true);
-			}, []);
+			}, [isMobile]);
 			const handleMouseLeave = (0, react.useCallback)(() => {
+				if (isMobile) return;
 				if (hoverTimerRef.current !== null) clearTimeout(hoverTimerRef.current);
 				hoverTimerRef.current = setTimeout(() => {
 					setIsExpanded(false);
 				}, 350);
-			}, []);
+			}, [isMobile]);
 			const triggerHighlight = (0, react.useCallback)((targetNode) => {
 				if (highlightTimerRef.current !== null) clearTimeout(highlightTimerRef.current);
 				const bubbleEl = targetNode.querySelector("[class*=\"bubble\"]") || targetNode;
@@ -471,11 +505,14 @@ window.__ModuleLoader__.load({
 			const content = /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: ChatHistoryQuickJump_module_css_default["navContainer"],
 				style: { right: `${String(posRight)}px` },
-				onMouseEnter: handleMouseEnter,
-				onMouseLeave: handleMouseLeave,
-				children: !isExpanded ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				onMouseEnter: isMobile ? void 0 : handleMouseEnter,
+				onMouseLeave: isMobile ? void 0 : handleMouseLeave,
+				children: !isExpanded ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+					type: "button",
 					className: ChatHistoryQuickJump_module_css_default["collapsedWidget"],
 					title: `对话目录（共 ${String(questions.length)} 个提问）`,
+					"aria-label": `打开对话目录，共 ${String(questions.length)} 个提问`,
+					"aria-expanded": false,
 					onClick: () => {
 						setIsExpanded(true);
 					},
@@ -502,8 +539,10 @@ window.__ModuleLoader__.load({
 					})]
 				}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: ChatHistoryQuickJump_module_css_default["expandedCard"],
-					onMouseEnter: handleMouseEnter,
-					onMouseLeave: handleMouseLeave,
+					role: "dialog",
+					"aria-label": "历史提问",
+					onMouseEnter: isMobile ? void 0 : handleMouseEnter,
+					onMouseLeave: isMobile ? void 0 : handleMouseLeave,
 					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: ChatHistoryQuickJump_module_css_default["cardHeader"],
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -525,21 +564,34 @@ window.__ModuleLoader__.load({
 							]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: ChatHistoryQuickJump_module_css_default["headerActions"],
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								className: ChatHistoryQuickJump_module_css_default["navButton"],
-								title: "跳转到顶部",
-								"aria-label": "跳转到顶部",
-								onClick: scrollToTop,
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ArrowUpIcon, {})
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								className: ChatHistoryQuickJump_module_css_default["navButton"],
-								title: "跳转到底部",
-								"aria-label": "跳转到底部",
-								onClick: scrollToBottom,
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ArrowDownIcon, {})
-							})]
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: ChatHistoryQuickJump_module_css_default["navButton"],
+									title: "跳转到顶部",
+									"aria-label": "跳转到顶部",
+									onClick: scrollToTop,
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ArrowUpIcon, {})
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: ChatHistoryQuickJump_module_css_default["navButton"],
+									title: "跳转到底部",
+									"aria-label": "跳转到底部",
+									onClick: scrollToBottom,
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ArrowDownIcon, {})
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: `${ChatHistoryQuickJump_module_css_default["navButton"]} ${ChatHistoryQuickJump_module_css_default["mobileCloseButton"] ?? ""}`,
+									title: "关闭对话目录",
+									"aria-label": "关闭对话目录",
+									onClick: () => {
+										setIsExpanded(false);
+									},
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CloseIcon, {})
+								})
+							]
 						})]
 					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						ref: listContainerRef,
@@ -553,6 +605,7 @@ window.__ModuleLoader__.load({
 								title: `第 ${String(idx + 1)} 个提问：${q.text}`,
 								onClick: () => {
 									jumpToQuestion(q, idx);
+									if (isMobile) setIsExpanded(false);
 								},
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 									className: ChatHistoryQuickJump_module_css_default["indexBadge"],

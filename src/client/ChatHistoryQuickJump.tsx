@@ -62,6 +62,15 @@ function ArrowDownIcon(): ReactNode {
   )
 }
 
+/** Close icon used by the touch-friendly mobile panel. */
+function CloseIcon(): ReactNode {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 /** Find the true scrolling container of the conversation (marked by data-conversation-scroll or overflowing ancestor) */
 function findActualScroller(targetEl?: HTMLElement | null): HTMLElement {
   if (targetEl) {
@@ -248,9 +257,34 @@ export function ChatHistoryQuickJump({
   const [posRight, setPosRight] = useState<number>(20)
   const [chatInView, setChatInView] = useState<boolean>(false)
   const [domVersion, setDomVersion] = useState(0)
+  const [isMobile, setIsMobile] = useState<boolean>(false)
   const listContainerRef = useRef<HTMLDivElement | null>(null)
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Hover is not available on most phones. Keep the panel tap-driven there and
+  // also react to orientation / breakpoint changes without relying on user agent sniffing.
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px), (hover: none) and (pointer: coarse)')
+    const updateMobileState = (): void => {
+      setIsMobile(mediaQuery.matches)
+    }
+
+    updateMobileState()
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateMobileState)
+    } else {
+      // Safari versions that predate MediaQueryListEventTarget.
+      mediaQuery.addListener(updateMobileState)
+    }
+    return () => {
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', updateMobileState)
+      } else {
+        mediaQuery.removeListener(updateMobileState)
+      }
+    }
+  }, [])
 
   // Clean up pending timers on unmount
   useEffect(() => {
@@ -483,23 +517,26 @@ export function ChatHistoryQuickJump({
     }
   }, [questions])
 
-  // Hover handlers with debounce for smooth transitions
+  // Hover handlers with debounce for smooth transitions. They are disabled on
+  // touch layouts so a synthetic mouseleave cannot close a panel just opened by tap.
   const handleMouseEnter = useCallback((): void => {
+    if (isMobile) return
     if (hoverTimerRef.current !== null) {
       clearTimeout(hoverTimerRef.current)
       hoverTimerRef.current = null
     }
     setIsExpanded(true)
-  }, [])
+  }, [isMobile])
 
   const handleMouseLeave = useCallback((): void => {
+    if (isMobile) return
     if (hoverTimerRef.current !== null) {
       clearTimeout(hoverTimerRef.current)
     }
     hoverTimerRef.current = setTimeout(() => {
       setIsExpanded(false)
     }, 350)
-  }, [])
+  }, [isMobile])
 
   const triggerHighlight = useCallback((targetNode: HTMLElement): void => {
     if (highlightTimerRef.current !== null) {
@@ -577,13 +614,16 @@ export function ChatHistoryQuickJump({
     <div
       className={styles['navContainer']}
       style={{ right: `${String(posRight)}px` }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={isMobile ? undefined : handleMouseEnter}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
     >
       {!isExpanded ? (
-        <div
+        <button
+          type="button"
           className={styles['collapsedWidget']}
           title={`对话目录（共 ${String(questions.length)} 个提问）`}
+          aria-label={`打开对话目录，共 ${String(questions.length)} 个提问`}
+          aria-expanded={false}
           onClick={() => { setIsExpanded(true) }}
         >
           {visibleLines.map((q, idx) => {
@@ -604,12 +644,14 @@ export function ChatHistoryQuickJump({
               <span className={styles['moreDot']} />
             </div>
           )}
-        </div>
+        </button>
       ) : (
         <div
           className={styles['expandedCard']}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          role="dialog"
+          aria-label="历史提问"
+          onMouseEnter={isMobile ? undefined : handleMouseEnter}
+          onMouseLeave={isMobile ? undefined : handleMouseLeave}
         >
           <div className={styles['cardHeader']}>
             <div className={styles['headerLeft']}>
@@ -638,6 +680,15 @@ export function ChatHistoryQuickJump({
               >
                 <ArrowDownIcon />
               </button>
+              <button
+                type="button"
+                className={`${styles['navButton']} ${styles['mobileCloseButton'] ?? ''}`}
+                title="关闭对话目录"
+                aria-label="关闭对话目录"
+                onClick={() => { setIsExpanded(false) }}
+              >
+                <CloseIcon />
+              </button>
             </div>
           </div>
 
@@ -653,6 +704,8 @@ export function ChatHistoryQuickJump({
                   title={`第 ${String(idx + 1)} 个提问：${q.text}`}
                   onClick={() => {
                     jumpToQuestion(q, idx)
+                    // Return the conversation to full width after a touch selection.
+                    if (isMobile) setIsExpanded(false)
                   }}
                 >
                   <span className={styles['indexBadge']}>#{idx + 1}</span>
