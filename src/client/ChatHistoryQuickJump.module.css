@@ -291,17 +291,18 @@
   }
 }
 
-/* Touch layout: keep the trigger reachable and open the list above it so it
-   does not cover the composer or depend on hover, which phones do not have. */
+/* Touch layout: keep the trigger and expanded list centered without relying on
+   hover, which phones do not have. */
 .mobileCloseButton {
   display: none;
 }
 
 @media (max-width: 768px), (hover: none) and (pointer: coarse) {
   .navContainer {
-    top: auto;
-    bottom: max(72px, calc(env(safe-area-inset-bottom) + 12px));
-    transform: none;
+    /* Keep the mobile trigger vertically centered, same as the desktop layout. */
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
   }
 
   .collapsedWidget {
@@ -314,9 +315,10 @@
   }
 
   .expandedCard {
-    top: auto;
+    top: 50%;
     right: 0;
-    bottom: calc(100% + 10px);
+    bottom: auto;
+    transform: translateY(-50%);
     width: min(360px, calc(100vw - 36px));
     max-height: min(560px, calc(100vh - 96px));
     max-height: min(560px, calc(100dvh - 96px));
@@ -383,11 +385,11 @@
 @keyframes expandInMobile {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.96);
+    transform: translateY(calc(-50% + 8px)) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(-50%) scale(1);
   }
 }
 
