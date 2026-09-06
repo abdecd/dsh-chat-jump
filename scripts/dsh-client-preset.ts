@@ -55,16 +55,8 @@ export const PLATFORM_MODULES: readonly string[] = [
   '@deepseek-ai/dsh-client-schema-form',
 ]
 
-/**
- * The snapshot-store engine (createSnapshotStore/defineStore/shallowEqual)
- * lives in runtime pending its promotion-time rehoming; at runtime the lazy
- * CJS table answers the require natively because runtime is an immediately-tier
- * row registered before any dependent bundle materializes.
- */
-const RUNTIME_STORE_EXEMPTION = '@deepseek-ai/dsh-client-runtime/client'
-
 /** Externals resolved from the loader module table. */
-export const CLIENT_EXTERNALS: readonly string[] = [...PLATFORM_MODULES, RUNTIME_STORE_EXEMPTION]
+export const CLIENT_EXTERNALS: readonly string[] = [...PLATFORM_MODULES]
 
 /** Resolve an emitted JS asset import against its source-tree counterpart. */
 function sourceAssetPath(source: string, importer: string): string {

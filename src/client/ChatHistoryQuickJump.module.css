@@ -161,6 +161,12 @@
   border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
 }
 
+.activeNavButton {
+  color: var(--dsw-alias-brand-primary, #4d6bfe);
+  border-color: rgba(77, 107, 254, 0.35);
+  background: rgba(77, 107, 254, 0.1);
+}
+
 /* Question items list */
 .questionList {
   display: flex;
@@ -401,4 +407,23 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* 自动禁用 DSH 新版内置轮次导航 UI (TurnNavigator) */
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="轮次导航"]),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="Turn navigation"]),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label*="导航"]),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label*="navigation" i]),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label*="导航"])),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label*="navigation" i])),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(:has(+ [data-chat-flow]):not([data-chat-flow]):has(nav)),
+:global([data-dsh-turn-nav-disabled="true"]) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }

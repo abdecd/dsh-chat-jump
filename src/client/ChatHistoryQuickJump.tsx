@@ -3,9 +3,10 @@ import { createPortal } from 'react-dom'
 import type { EditableMessageBlock, RetryableTurn } from '../shared.ts'
 import styles from './ChatHistoryQuickJump.module.css'
 
-interface ChatHistoryQuickJumpProps {
+export interface ChatHistoryQuickJumpProps {
   messages?: readonly EditableMessageBlock[]
   retryableTurns?: readonly RetryableTurn[]
+  disableNativeTurnNav?: boolean
 }
 
 interface QuestionItem {
@@ -67,6 +68,21 @@ function CloseIcon(): ReactNode {
   return (
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+/** Turn Rail / Navigator toggle icon representing the DSH turn navigation rail */
+function TurnNavToggleIcon({ disabled }: { disabled: boolean }): ReactNode {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="3" width="7" height="2" rx="1" fill="currentColor" />
+      <rect x="2" y="7" width="11" height="2" rx="1" fill="currentColor" />
+      <rect x="2" y="11" width="5" height="2" rx="1" fill="currentColor" />
+      <path d="M14 2V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity={disabled ? 0.35 : 0.9} />
+      {disabled && (
+        <path d="M1.5 14.5L14.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      )}
     </svg>
   )
 }
@@ -251,6 +267,7 @@ function performScrollTo(targetNode: HTMLElement): void {
 export function ChatHistoryQuickJump({
   messages = [],
   retryableTurns = [],
+  disableNativeTurnNav: disableNativeTurnNavProp,
 }: ChatHistoryQuickJumpProps): ReactNode {
   const [isExpanded, setIsExpanded] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -258,9 +275,87 @@ export function ChatHistoryQuickJump({
   const [chatInView, setChatInView] = useState<boolean>(false)
   const [domVersion, setDomVersion] = useState(0)
   const [isMobile, setIsMobile] = useState<boolean>(false)
+  const [disableNativeTurnNav, setDisableNativeTurnNav] = useState<boolean>(() => {
+    if (disableNativeTurnNavProp !== undefined) return disableNativeTurnNavProp
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('dsh-chat-jump:disable-native-nav')
+        return saved === null ? true : saved !== 'false'
+      }
+    } catch {
+      // ignore
+    }
+    return true
+  })
   const listContainerRef = useRef<HTMLDivElement | null>(null)
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const toggleNativeTurnNav = useCallback((): void => {
+    setDisableNativeTurnNav(prev => {
+      const next = !prev
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('dsh-chat-jump:disable-native-nav', String(next))
+        }
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }, [])
+
+  // 自动禁用 DSH 新版内置轮次导航 UI (TurnNavigator)
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    if (!disableNativeTurnNav) {
+      document.documentElement.dataset.dshNativeTurnNav = 'enabled'
+      const disabledEls = document.querySelectorAll<HTMLElement>('[data-dsh-turn-nav-disabled="true"]')
+      for (const el of disabledEls) {
+        delete el.dataset.dshTurnNavDisabled
+        el.style.removeProperty('display')
+        el.style.removeProperty('visibility')
+        el.style.removeProperty('pointer-events')
+      }
+      return () => {
+        delete document.documentElement.dataset.dshNativeTurnNav
+      }
+    }
+
+    document.documentElement.dataset.dshNativeTurnNav = 'disabled'
+
+    // 主要隐藏由纯 CSS 的 html:not 规则直接生效（渲染引擎原生执行，零 JS 运行时开销）
+    // 此处复用已有 RAF 节流的 domVersion 仅做属性打标辅助，不挂载任何额外的 body MutationObserver
+    const navElements = document.querySelectorAll<HTMLElement>(
+      'nav[aria-label="轮次导航"], nav[aria-label="Turn navigation"], nav[aria-label*="导航"], nav[aria-label*="navigation" i]'
+    )
+    for (const nav of navElements) {
+      nav.dataset.dshTurnNavDisabled = 'true'
+      if (nav.parentElement && nav.parentElement !== document.body) {
+        nav.parentElement.dataset.dshTurnNavDisabled = 'true'
+      }
+    }
+
+    const chatFlow = document.querySelector('[data-chat-flow]')
+    if (chatFlow && chatFlow.previousElementSibling) {
+      const prev = chatFlow.previousElementSibling as HTMLElement
+      if (prev.querySelector('nav') || prev.tagName.toLowerCase() === 'nav') {
+        prev.dataset.dshTurnNavDisabled = 'true'
+      }
+    }
+
+    return () => {
+      delete document.documentElement.dataset.dshNativeTurnNav
+      const disabledEls = document.querySelectorAll<HTMLElement>('[data-dsh-turn-nav-disabled="true"]')
+      for (const el of disabledEls) {
+        delete el.dataset.dshTurnNavDisabled
+        el.style.removeProperty('display')
+        el.style.removeProperty('visibility')
+        el.style.removeProperty('pointer-events')
+      }
+    }
+  }, [disableNativeTurnNav, domVersion])
 
   // Hover is not available on most phones. Keep the panel tap-driven there and
   // also react to orientation / breakpoint changes without relying on user agent sniffing.
@@ -621,7 +716,7 @@ export function ChatHistoryQuickJump({
         <button
           type="button"
           className={styles['collapsedWidget']}
-          title={`对话目录（共 ${String(questions.length)} 个提问）`}
+          title={`对话目录（共 ${String(questions.length)} 个提问）${disableNativeTurnNav ? ' · 原生轮次导航已自动禁用' : ''}`}
           aria-label={`打开对话目录，共 ${String(questions.length)} 个提问`}
           aria-expanded={false}
           onClick={() => { setIsExpanded(true) }}
@@ -662,6 +757,15 @@ export function ChatHistoryQuickJump({
               <span className={styles['countBadge']}>{questions.length} 条</span>
             </div>
             <div className={styles['headerActions']}>
+              <button
+                type="button"
+                className={`${styles['navButton']} ${disableNativeTurnNav ? styles['activeNavButton'] ?? '' : ''}`}
+                title={disableNativeTurnNav ? 'DSH 原生轮次导航：已自动禁用（点击可恢复）' : 'DSH 原生轮次导航：已启用（点击可禁用）'}
+                aria-label={disableNativeTurnNav ? '恢复 DSH 原生轮次导航' : '禁用 DSH 原生轮次导航'}
+                onClick={toggleNativeTurnNav}
+              >
+                <TurnNavToggleIcon disabled={disableNativeTurnNav} />
+              </button>
               <button
                 type="button"
                 className={styles['navButton']}
