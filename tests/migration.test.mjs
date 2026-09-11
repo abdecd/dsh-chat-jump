@@ -13,10 +13,10 @@ const pkg = JSON.parse(await read('package.json'))
 test('manifest declares the target cohort and all injected peers', () => {
   assert.equal(pkg.peerDependencies['@deepseek-ai/cordis'], '^4.0.1')
   for (const [name, range] of Object.entries(pkg.peerDependencies)) {
-    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(range, '^0.1.2-rc.1')
+    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(range, '^0.1.5-rc.2')
   }
   for (const [name, version] of Object.entries(pkg.devDependencies)) {
-    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(version, '0.1.2-rc.1')
+    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(version, '0.1.5-rc.2')
   }
   for (const name of pkg.dsh.client.inject) assert.ok(pkg.peerDependencies[name], name)
   assert.deepEqual(pkg.dsh.client.inject, [
@@ -33,7 +33,7 @@ test('removed runtime cannot survive manifest, source, preset, lockfile or artif
   const lock = await read('pnpm-lock.yaml')
   const versions = [...lock.matchAll(/@deepseek-ai\/dsh-[^@'\s]+@(0\.[^('\s:]+)/g)].map(match => match[1])
   assert.ok(versions.length > 0)
-  assert.deepEqual([...new Set(versions)], ['0.1.2-rc.1'])
+  assert.deepEqual([...new Set(versions)], ['0.1.5-rc.2'])
 })
 
 test('built factory uses only React externals and registers the existing slot', async () => {
