@@ -326,13 +326,14 @@ export function ChatHistoryQuickJump({
     document.documentElement.dataset.dshNativeTurnNav = 'disabled'
 
     // 主要隐藏由纯 CSS 的 html:not 规则直接生效（渲染引擎原生执行，零 JS 运行时开销）
-    // 此处复用已有 RAF 节流的 domVersion 仅做属性打标辅助，不挂载任何额外的 body MutationObserver
+    // 此处复用已有 RAF 节流的 domVersion 仅做属性打标辅助，严格限制只匹配轮次导航并排除弹窗
     const navElements = document.querySelectorAll<HTMLElement>(
-      'nav[aria-label="轮次导航"], nav[aria-label="Turn navigation"], nav[aria-label*="导航"], nav[aria-label*="navigation" i]'
+      'nav[aria-label="轮次导航"], nav[aria-label="Turn navigation"]'
     )
     for (const nav of navElements) {
+      if (nav.closest('[role="dialog"], dialog, .dim-page, .dim-layout')) continue
       nav.dataset.dshTurnNavDisabled = 'true'
-      if (nav.parentElement && nav.parentElement !== document.body) {
+      if (nav.parentElement && nav.parentElement !== document.body && !nav.parentElement.closest('[role="dialog"], dialog, .dim-page, .dim-layout')) {
         nav.parentElement.dataset.dshTurnNavDisabled = 'true'
       }
     }

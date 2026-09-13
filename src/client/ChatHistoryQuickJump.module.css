@@ -409,15 +409,13 @@
   }
 }
 
-/* 自动禁用 DSH 新版内置轮次导航 UI (TurnNavigator) */
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="轮次导航"]),
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="Turn navigation"]),
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label*="导航"]),
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label*="navigation" i]),
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label*="导航"])),
-:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label*="navigation" i])),
+/* 自动禁用 DSH 新版内置轮次导航 UI (TurnNavigator)，精确限定避免误伤设置或弹窗导航 */
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="轮次导航"]:not([role="dialog"] nav):not(dialog nav)),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(nav[aria-label="Turn navigation"]:not([role="dialog"] nav):not(dialog nav)),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label="轮次导航"])):not([role="dialog"]):not(:has([role="dialog"])),
+:global(html:not([data-dsh-native-turn-nav="enabled"])) :global(div:has(> nav[aria-label="Turn navigation"])):not([role="dialog"]):not(:has([role="dialog"])),
 :global(html:not([data-dsh-native-turn-nav="enabled"])) :global(:has(+ [data-chat-flow]):not([data-chat-flow]):has(nav)),
-:global([data-dsh-turn-nav-disabled="true"]) {
+:global([data-dsh-turn-nav-disabled="true"]:not([role="dialog"]):not(:has([role="dialog"])):not(.dim-layout):not(.dim-rail)) {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
