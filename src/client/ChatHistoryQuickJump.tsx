@@ -288,6 +288,8 @@ export function ChatHistoryQuickJump({
     return true
   })
   const listContainerRef = useRef<HTMLDivElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const updatePositionRef = useRef<(() => void) | null>(null)
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -500,7 +502,9 @@ export function ChatHistoryQuickJump({
 
   // Track chat container position to keep fixed widget pinned to the right edge of chat view
   useEffect(() => {
-    let rafId: number | null = null
+    let transitionRafId: number | null = null
+    let trackingEndTime = 0
+    let observedScroller: HTMLElement | null = null
 
     const updatePosition = (): void => {
       const chatFlow = document.querySelector('[data-chat-flow]')
@@ -510,32 +514,168 @@ export function ChatHistoryQuickJump({
       }
       setChatInView(true)
       const scroller = findActualScroller()
+      let offset = 20
       if (scroller) {
         const rect = scroller.getBoundingClientRect()
-        const offset = Math.max(16, window.innerWidth - rect.right + 18)
-        setPosRight(offset)
-      } else {
-        setPosRight(20)
+        let boundaryRight = rect.right
+
+        // 1. Check rightbar column grid container if present
+        const rightbarCol = document.querySelector<HTMLElement>('[data-rightbar-col], [class*="rightbarCol"]')
+        if (rightbarCol) {
+          const colRect = rightbarCol.getBoundingClientRect()
+          if (colRect.width > 0 && colRect.left > 0 && colRect.left < boundaryRight) {
+            boundaryRight = colRect.left
+          }
+        }
+
+        // 2. Check open right sidebar panel (supports both push & overlay modes)
+        const rightPanel = document.querySelector<HTMLElement>('[data-sidebar-right-open]')
+        if (rightPanel) {
+          const panelRect = rightPanel.getBoundingClientRect()
+          if (panelRect.width > 0 && panelRect.left > 0 && panelRect.left < boundaryRight) {
+            boundaryRight = panelRect.left
+          }
+        }
+
+        offset = Math.max(16, Math.round(window.innerWidth - boundaryRight + 18))
       }
+
+      // Direct DOM update for instantaneous, lag-free 60fps/120fps animation during transitions
+      if (containerRef.current) {
+        containerRef.current.style.right = `${String(offset)}px`
+      }
+      setPosRight(prev => (prev === offset ? prev : offset))
+    }
+
+    updatePositionRef.current = updatePosition
+
+    const startTransitionTracking = (duration = 450): void => {
+      trackingEndTime = Math.max(trackingEndTime, performance.now() + duration)
+      if (transitionRafId !== null) return
+
+      const step = (): void => {
+        updatePosition()
+        if (performance.now() < trackingEndTime) {
+          transitionRafId = requestAnimationFrame(step)
+        } else {
+          transitionRafId = null
+          updatePosition()
+        }
+      }
+      transitionRafId = requestAnimationFrame(step)
     }
 
     const scheduleUpdatePosition = (): void => {
-      if (rafId !== null) return
-      rafId = requestAnimationFrame(() => {
-        rafId = null
-        updatePosition()
-      })
+      startTransitionTracking(150)
     }
 
+    // Initial positioning and short tracking window in case layout is settling
     updatePosition()
-    window.addEventListener('resize', scheduleUpdatePosition)
-    const observer = new MutationObserver(scheduleUpdatePosition)
-    observer.observe(document.body, { childList: true, subtree: true })
+    startTransitionTracking(300)
+
+    // ResizeObserver: monitors scroller, frame, and body size changes continuously
+    const resizeObserver = new ResizeObserver(() => {
+      startTransitionTracking(200)
+    })
+
+    const attachResizeObserver = (): void => {
+      const scroller = findActualScroller()
+      if (scroller && scroller !== observedScroller) {
+        if (observedScroller) resizeObserver.unobserve(observedScroller)
+        observedScroller = scroller
+        resizeObserver.observe(scroller)
+      }
+
+      const frame = document.querySelector<HTMLElement>('[class*="frame"]')
+      if (frame) resizeObserver.observe(frame)
+
+      const chatFlow = document.querySelector<HTMLElement>('[data-chat-flow]')
+      if (chatFlow) resizeObserver.observe(chatFlow)
+
+      const centerCol = document.querySelector<HTMLElement>('[class*="centerCol"]')
+      if (centerCol) resizeObserver.observe(centerCol)
+
+      resizeObserver.observe(document.body)
+    }
+
+    attachResizeObserver()
+
+    // MutationObserver: monitors class, style, and data attributes of sidebar/frame toggles
+    const mutationObserver = new MutationObserver(() => {
+      attachResizeObserver()
+      startTransitionTracking(450)
+    })
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: [
+        'style',
+        'class',
+        'data-sidebar-right-open',
+        'data-sidebar-right-panel',
+        'data-sidebar-collapsed',
+        'data-rightbar-collapsed',
+        'data-rightbar-fullscreen',
+        'data-dragging',
+        'aria-hidden',
+      ],
+    })
+
+    // CSS Transition & Animation listeners: tracks CSS transition of AppFrame and sidebar
+    const onTransitionEvent = (e: Event): void => {
+      const target = e.target as HTMLElement | null
+      if (
+        !target ||
+        target === document.body ||
+        target.matches?.(
+          '[class*="frame"], [class*="sidebar"], [class*="rightbar"], [data-conversation-scroll], [data-chat-flow], [data-rightbar-col]'
+        )
+      ) {
+        startTransitionTracking(450)
+      }
+    }
+
+    const onTransitionEnd = (): void => {
+      updatePosition()
+    }
+
+    window.addEventListener('transitionrun', onTransitionEvent, { passive: true, capture: true })
+    window.addEventListener('transitionstart', onTransitionEvent, { passive: true, capture: true })
+    window.addEventListener('transitionend', onTransitionEnd, { passive: true, capture: true })
+    window.addEventListener('transitioncancel', onTransitionEnd, { passive: true, capture: true })
+    window.addEventListener('animationstart', onTransitionEvent, { passive: true, capture: true })
+    window.addEventListener('animationend', onTransitionEnd, { passive: true, capture: true })
+
+    // Window resize & orientation
+    window.addEventListener('resize', scheduleUpdatePosition, { passive: true })
+    window.addEventListener('orientationchange', scheduleUpdatePosition, { passive: true })
+
+    // Passive throttled pointermove safeguard
+    let lastPointerCheck = 0
+    const onPointerMove = (): void => {
+      const now = performance.now()
+      if (now - lastPointerCheck > 250) {
+        lastPointerCheck = now
+        updatePosition()
+      }
+    }
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
 
     return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId)
+      updatePositionRef.current = null
+      if (transitionRafId !== null) cancelAnimationFrame(transitionRafId)
       window.removeEventListener('resize', scheduleUpdatePosition)
-      observer.disconnect()
+      window.removeEventListener('orientationchange', scheduleUpdatePosition)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('transitionrun', onTransitionEvent, { capture: true })
+      window.removeEventListener('transitionstart', onTransitionEvent, { capture: true })
+      window.removeEventListener('transitionend', onTransitionEnd, { capture: true })
+      window.removeEventListener('transitioncancel', onTransitionEnd, { capture: true })
+      window.removeEventListener('animationstart', onTransitionEvent, { capture: true })
+      window.removeEventListener('animationend', onTransitionEnd, { capture: true })
+      resizeObserver.disconnect()
+      mutationObserver.disconnect()
     }
   }, [])
 
@@ -617,6 +757,7 @@ export function ChatHistoryQuickJump({
   // touch layouts so a synthetic mouseleave cannot close a panel just opened by tap.
   const handleMouseEnter = useCallback((): void => {
     if (isMobile) return
+    updatePositionRef.current?.()
     if (hoverTimerRef.current !== null) {
       clearTimeout(hoverTimerRef.current)
       hoverTimerRef.current = null
@@ -708,6 +849,7 @@ export function ChatHistoryQuickJump({
 
   const content = (
     <div
+      ref={containerRef}
       className={styles['navContainer']}
       style={{ right: `${String(posRight)}px` }}
       onMouseEnter={isMobile ? undefined : handleMouseEnter}

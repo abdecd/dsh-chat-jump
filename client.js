@@ -18,33 +18,33 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var ChatHistoryQuickJump_module_css_default = {
+			"headerLeft": "_8fFqXG_headerLeft",
 			"headerIcon": "_8fFqXG_headerIcon",
-			"navButton": "_8fFqXG_navButton",
-			"activeNavButton": "_8fFqXG_activeNavButton",
-			"headerActions": "_8fFqXG_headerActions",
-			"navContainer": "_8fFqXG_navContainer",
-			"countBadge": "_8fFqXG_countBadge",
-			"questionItem": "_8fFqXG_questionItem",
-			"itemText": "_8fFqXG_itemText",
+			"questionList": "_8fFqXG_questionList",
 			"itemTime": "_8fFqXG_itemTime",
+			"highlightTarget": "_8fFqXG_highlightTarget",
+			"navContainer": "_8fFqXG_navContainer",
 			"moreDot": "_8fFqXG_moreDot",
-			"itemContent": "_8fFqXG_itemContent",
+			"collapsedWidget": "_8fFqXG_collapsedWidget",
+			"activeLine": "_8fFqXG_activeLine",
+			"activeNavButton": "_8fFqXG_activeNavButton",
+			"navButton": "_8fFqXG_navButton",
+			"moreDots": "_8fFqXG_moreDots",
+			"questionItem": "_8fFqXG_questionItem",
+			"indexBadge": "_8fFqXG_indexBadge",
 			"jumpTargetPulse": "_8fFqXG_jumpTargetPulse",
 			"expandInMobile": "_8fFqXG_expandInMobile",
-			"expandedCard": "_8fFqXG_expandedCard",
-			"highlightTarget": "_8fFqXG_highlightTarget",
-			"indexBadge": "_8fFqXG_indexBadge",
-			"questionList": "_8fFqXG_questionList",
-			"miniLine": "_8fFqXG_miniLine",
-			"activeItem": "_8fFqXG_activeItem",
-			"headerTitle": "_8fFqXG_headerTitle",
-			"mobileCloseButton": "_8fFqXG_mobileCloseButton",
-			"collapsedWidget": "_8fFqXG_collapsedWidget",
-			"moreDots": "_8fFqXG_moreDots",
-			"headerLeft": "_8fFqXG_headerLeft",
-			"expandIn": "_8fFqXG_expandIn",
 			"cardHeader": "_8fFqXG_cardHeader",
-			"activeLine": "_8fFqXG_activeLine"
+			"miniLine": "_8fFqXG_miniLine",
+			"headerTitle": "_8fFqXG_headerTitle",
+			"expandIn": "_8fFqXG_expandIn",
+			"countBadge": "_8fFqXG_countBadge",
+			"itemContent": "_8fFqXG_itemContent",
+			"expandedCard": "_8fFqXG_expandedCard",
+			"itemText": "_8fFqXG_itemText",
+			"mobileCloseButton": "_8fFqXG_mobileCloseButton",
+			"activeItem": "_8fFqXG_activeItem",
+			"headerActions": "_8fFqXG_headerActions"
 		};
 		//#endregion
 		//#region src/client/ChatHistoryQuickJump.tsx
@@ -293,6 +293,8 @@ window.__ModuleLoader__.load({
 				return true;
 			});
 			const listContainerRef = (0, react.useRef)(null);
+			const containerRef = (0, react.useRef)(null);
+			const updatePositionRef = (0, react.useRef)(null);
 			const hoverTimerRef = (0, react.useRef)(null);
 			const highlightTimerRef = (0, react.useRef)(null);
 			const toggleNativeTurnNav = (0, react.useCallback)(() => {
@@ -450,7 +452,9 @@ window.__ModuleLoader__.load({
 				prevExpandedRef.current = isExpanded;
 			}, [isExpanded, activeIndex]);
 			(0, react.useEffect)(() => {
-				let rafId = null;
+				let transitionRafId = null;
+				let trackingEndTime = 0;
+				let observedScroller = null;
 				const updatePosition = () => {
 					if (!document.querySelector("[data-chat-flow]")) {
 						setChatInView(false);
@@ -458,30 +462,138 @@ window.__ModuleLoader__.load({
 					}
 					setChatInView(true);
 					const scroller = findActualScroller();
+					let offset = 20;
 					if (scroller) {
-						const rect = scroller.getBoundingClientRect();
-						const offset = Math.max(16, window.innerWidth - rect.right + 18);
-						setPosRight(offset);
-					} else setPosRight(20);
+						let boundaryRight = scroller.getBoundingClientRect().right;
+						const rightbarCol = document.querySelector("[data-rightbar-col], [class*=\"rightbarCol\"]");
+						if (rightbarCol) {
+							const colRect = rightbarCol.getBoundingClientRect();
+							if (colRect.width > 0 && colRect.left > 0 && colRect.left < boundaryRight) boundaryRight = colRect.left;
+						}
+						const rightPanel = document.querySelector("[data-sidebar-right-open]");
+						if (rightPanel) {
+							const panelRect = rightPanel.getBoundingClientRect();
+							if (panelRect.width > 0 && panelRect.left > 0 && panelRect.left < boundaryRight) boundaryRight = panelRect.left;
+						}
+						offset = Math.max(16, Math.round(window.innerWidth - boundaryRight + 18));
+					}
+					if (containerRef.current) containerRef.current.style.right = `${String(offset)}px`;
+					setPosRight((prev) => prev === offset ? prev : offset);
+				};
+				updatePositionRef.current = updatePosition;
+				const startTransitionTracking = (duration = 450) => {
+					trackingEndTime = Math.max(trackingEndTime, performance.now() + duration);
+					if (transitionRafId !== null) return;
+					const step = () => {
+						updatePosition();
+						if (performance.now() < trackingEndTime) transitionRafId = requestAnimationFrame(step);
+						else {
+							transitionRafId = null;
+							updatePosition();
+						}
+					};
+					transitionRafId = requestAnimationFrame(step);
 				};
 				const scheduleUpdatePosition = () => {
-					if (rafId !== null) return;
-					rafId = requestAnimationFrame(() => {
-						rafId = null;
-						updatePosition();
-					});
+					startTransitionTracking(150);
 				};
 				updatePosition();
-				window.addEventListener("resize", scheduleUpdatePosition);
-				const observer = new MutationObserver(scheduleUpdatePosition);
-				observer.observe(document.body, {
-					childList: true,
-					subtree: true
+				startTransitionTracking(300);
+				const resizeObserver = new ResizeObserver(() => {
+					startTransitionTracking(200);
 				});
+				const attachResizeObserver = () => {
+					const scroller = findActualScroller();
+					if (scroller && scroller !== observedScroller) {
+						if (observedScroller) resizeObserver.unobserve(observedScroller);
+						observedScroller = scroller;
+						resizeObserver.observe(scroller);
+					}
+					const frame = document.querySelector("[class*=\"frame\"]");
+					if (frame) resizeObserver.observe(frame);
+					const chatFlow = document.querySelector("[data-chat-flow]");
+					if (chatFlow) resizeObserver.observe(chatFlow);
+					const centerCol = document.querySelector("[class*=\"centerCol\"]");
+					if (centerCol) resizeObserver.observe(centerCol);
+					resizeObserver.observe(document.body);
+				};
+				attachResizeObserver();
+				const mutationObserver = new MutationObserver(() => {
+					attachResizeObserver();
+					startTransitionTracking(450);
+				});
+				mutationObserver.observe(document.body, {
+					childList: true,
+					subtree: true,
+					attributes: true,
+					attributeFilter: [
+						"style",
+						"class",
+						"data-sidebar-right-open",
+						"data-sidebar-right-panel",
+						"data-sidebar-collapsed",
+						"data-rightbar-collapsed",
+						"data-rightbar-fullscreen",
+						"data-dragging",
+						"aria-hidden"
+					]
+				});
+				const onTransitionEvent = (e) => {
+					const target = e.target;
+					if (!target || target === document.body || target.matches?.("[class*=\"frame\"], [class*=\"sidebar\"], [class*=\"rightbar\"], [data-conversation-scroll], [data-chat-flow], [data-rightbar-col]")) startTransitionTracking(450);
+				};
+				const onTransitionEnd = () => {
+					updatePosition();
+				};
+				window.addEventListener("transitionrun", onTransitionEvent, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("transitionstart", onTransitionEvent, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("transitionend", onTransitionEnd, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("transitioncancel", onTransitionEnd, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("animationstart", onTransitionEvent, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("animationend", onTransitionEnd, {
+					passive: true,
+					capture: true
+				});
+				window.addEventListener("resize", scheduleUpdatePosition, { passive: true });
+				window.addEventListener("orientationchange", scheduleUpdatePosition, { passive: true });
+				let lastPointerCheck = 0;
+				const onPointerMove = () => {
+					const now = performance.now();
+					if (now - lastPointerCheck > 250) {
+						lastPointerCheck = now;
+						updatePosition();
+					}
+				};
+				window.addEventListener("pointermove", onPointerMove, { passive: true });
 				return () => {
-					if (rafId !== null) cancelAnimationFrame(rafId);
+					updatePositionRef.current = null;
+					if (transitionRafId !== null) cancelAnimationFrame(transitionRafId);
 					window.removeEventListener("resize", scheduleUpdatePosition);
-					observer.disconnect();
+					window.removeEventListener("orientationchange", scheduleUpdatePosition);
+					window.removeEventListener("pointermove", onPointerMove);
+					window.removeEventListener("transitionrun", onTransitionEvent, { capture: true });
+					window.removeEventListener("transitionstart", onTransitionEvent, { capture: true });
+					window.removeEventListener("transitionend", onTransitionEnd, { capture: true });
+					window.removeEventListener("transitioncancel", onTransitionEnd, { capture: true });
+					window.removeEventListener("animationstart", onTransitionEvent, { capture: true });
+					window.removeEventListener("animationend", onTransitionEnd, { capture: true });
+					resizeObserver.disconnect();
+					mutationObserver.disconnect();
 				};
 			}, []);
 			(0, react.useEffect)(() => {
@@ -540,6 +652,7 @@ window.__ModuleLoader__.load({
 			}, [questions]);
 			const handleMouseEnter = (0, react.useCallback)(() => {
 				if (isMobile) return;
+				updatePositionRef.current?.();
 				if (hoverTimerRef.current !== null) {
 					clearTimeout(hoverTimerRef.current);
 					hoverTimerRef.current = null;
@@ -610,6 +723,7 @@ window.__ModuleLoader__.load({
 			const visibleLines = questions.slice(0, maxDisplayLines);
 			const hasMoreLines = questions.length > maxDisplayLines;
 			const content = /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				ref: containerRef,
 				className: ChatHistoryQuickJump_module_css_default["navContainer"],
 				style: { right: `${String(posRight)}px` },
 				onMouseEnter: isMobile ? void 0 : handleMouseEnter,

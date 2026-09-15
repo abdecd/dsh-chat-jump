@@ -74,3 +74,14 @@ test('client bundle contains rules and logic to automatically disable DSH new tu
   assert.match(clientJs, /dsh-native-turn-nav/)
   assert.match(clientJs, /dsh-turn-nav-disabled/)
 })
+
+test('client bundle synchronizes bar position with sidebar layout and transition events', async () => {
+  const clientJs = await read('client.js')
+  assert.match(clientJs, /ResizeObserver/)
+  assert.match(clientJs, /transitionrun/)
+  assert.match(clientJs, /transitionstart/)
+  assert.match(clientJs, /transitionend/)
+  assert.match(clientJs, /data-sidebar-right-open/)
+  assert.match(clientJs, /data-rightbar-col/)
+})
+
