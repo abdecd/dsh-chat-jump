@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { runInNewContext } from 'node:vm'
 import test from 'node:test'
+import semver from 'semver'
 
 const root = new URL('../', import.meta.url)
 const read = path => readFile(new URL(path, root), 'utf8')
@@ -13,16 +14,44 @@ const pkg = JSON.parse(await read('package.json'))
 test('manifest declares the target cohort and all injected peers', () => {
   assert.equal(pkg.peerDependencies['@deepseek-ai/cordis'], '^4.0.1')
   for (const [name, range] of Object.entries(pkg.peerDependencies)) {
-    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(range, '^0.1.7-rc.2')
+    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(range, '^0.2.0-rc.2')
   }
   for (const [name, version] of Object.entries(pkg.devDependencies)) {
-    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(version, '0.1.7-rc.2')
+    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(version, '0.2.0-rc.2')
   }
   for (const name of pkg.dsh.client.inject) assert.ok(pkg.peerDependencies[name], name)
   assert.deepEqual(pkg.dsh.client.inject, [
     '@deepseek-ai/dsh-client-ui-slots',
     '@deepseek-ai/dsh-client-ui-conversation',
   ])
+})
+
+test('target peer admission admits 0.2.0-rc.2 and refuses legacy/unadmitted ranges', () => {
+  const targetVersion = '0.2.0-rc.2'
+  const legacyVersion = '0.1.7-rc.2'
+
+  const dshPeers = Object.entries(pkg.peerDependencies).filter(([name]) => name.startsWith('@deepseek-ai/dsh-'))
+  assert.ok(dshPeers.length > 0)
+  for (const [name, range] of dshPeers) {
+    // Real semver evaluation matching DSH host plugin compatibility gate (semver with includePrerelease: true)
+    assert.ok(
+      semver.satisfies(targetVersion, range, { includePrerelease: true }),
+      `Peer ${name} range ${range} must admit target host ${targetVersion}`,
+    )
+    assert.equal(
+      semver.satisfies(legacyVersion, range, { includePrerelease: true }),
+      false,
+      `Peer ${name} range ${range} must refuse legacy host ${legacyVersion}`,
+    )
+    // Prove naive ^0.2.0 fails to admit target rc2 under prerelease rules
+    assert.equal(
+      semver.satisfies(targetVersion, '^0.2.0', { includePrerelease: true }),
+      false,
+      'Naive ^0.2.0 must not satisfy 0.2.0-rc.2',
+    )
+    assert.notEqual(range, '^0.2.0', `Peer ${name} must not use naive ^0.2.0`)
+    assert.notEqual(range, '^0.1.7-rc.2', `Peer ${name} must not use legacy ^0.1.7-rc.2`)
+  }
 })
 
 test('removed runtime cannot survive manifest, source, preset, lockfile or artifacts', async () => {
@@ -33,7 +62,7 @@ test('removed runtime cannot survive manifest, source, preset, lockfile or artif
   const lock = await read('pnpm-lock.yaml')
   const versions = [...lock.matchAll(/@deepseek-ai\/dsh-[^@'\s]+@(0\.[^('\s:]+)/g)].map(match => match[1])
   assert.ok(versions.length > 0)
-  assert.deepEqual([...new Set(versions)], ['0.1.7-rc.2'])
+  assert.deepEqual([...new Set(versions)], ['0.2.0-rc.2'])
 })
 
 test('built factory uses only React externals and registers the existing slot', async () => {

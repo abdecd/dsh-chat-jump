@@ -47,6 +47,10 @@ pnpm build         # 构建产物：index.mjs + client.js + client.js.map
 - **Client Bundle**：符合 DSH 客户端规范，通过 `__ModuleLoader__` 加载，CSS Modules 经 lightningcss 编译并在运行时自动注入独立样式标签。
 - **Host Bundle**：遵循 Cordis 插件规范注册。
 
+> **版本适配与验证说明（DSH 0.2.0-rc.2）**：
+> - 本插件已完成面向 DeepSeek Harness `0.2.0-rc.2` 的静态契约适配，包括 peerDependencies 范围（`^0.2.0-rc.2`）、槽位声明绑定及构建产物回归验证。
+> - 本次适配为静态目标验证（typecheck、build 与 static/built-artifact regression tests）；未在真实运行的主机与真实浏览器 DOM 环境下进行动态实测（未启动 host / browser 进程）。
+
 ## 目录结构
 
 ```
